@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- <template id="report_invoice_document" inherit_id="sale.report_invoice_document">
+        <xpath expr="//table[@class='table table-sm table-striped']//tbody" position="inside">
+            <tr t-foreach="doc.invoice_line_ids" t-as="line">
+                <td>
+                    <span t-field="line.product_id.display_name"/>
+                </td>
+                <td class="text-right">
+                    <span t-field="line.product_uom_qty"/>
+                </td>
+                <td class="text-right">
+                    <span t-field="line.discounted_price"/>
+                </td>
+            </tr>
+        </xpath>
+    </template> -->
+</odoo>

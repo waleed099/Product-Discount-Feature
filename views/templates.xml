@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+
+    <!-- This is the template that will be used to display the discounted price in the product list page -->
+    <template id="product_products_item_inherit" inherit_id="website_sale.products_item" name="Product Item Display Modification">
+        <xpath expr="//div[@class='product_price']" position="replace">
+            <t t-if="product.discount_percentage > 0">
+                <!-- Display original price with strikethrough -->
+                <span class="original-price" style="text-decoration: line-through; color: red;">
+                    <!-- <t t-esc="product.list_price"/> -->
+                        <t t-if="'base_price' in template_price_vals and (template_price_vals['base_price'] &gt; template_price_vals['price_reduce']) and (template_price_vals['price_reduce'] or not website.prevent_zero_price_sale)">
+                            <del t-attf-class="text-muted me-1 h6 mb-0" style="white-space: nowrap;">
+                                <em class="small" t-esc="template_price_vals['base_price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" />
+                            </del>
+                        </t>
+                        <span class="h6 mb-0" t-if="template_price_vals['price_reduce'] or not website.prevent_zero_price_sale" t-esc="template_price_vals['price_reduce']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        <span class="h6 mb-0" t-elif="any(ptav.price_extra for ptav in product.attribute_line_ids.product_template_value_ids)">&amp;nbsp;</span>
+                        <span class="h6 mb-0" t-else="" t-field="website.prevent_zero_price_sale_text"/>
+                        <span itemprop="price" style="display:none;" t-esc="template_price_vals['price_reduce']" />
+                        <span itemprop="priceCurrency" style="display:none;" t-esc="website.currency_id.name" />
+                </span>
+                <!-- Display discounted price -->
+                <span class="discounted-price" style="font-weight: bold; color: green;">
+                   
+                        <span t-esc="product.discounted_price"/>
+                       
+                </span>
+            </t>
+            <t t-if="product.discount_percentage == 0">
+                <!-- Display only original price if no discount -->
+                <span class="regular-price">
+                    <!-- <t t-esc="product.list_price"/> -->
+                    <t t-if="'base_price' in template_price_vals and (template_price_vals['base_price'] &gt; template_price_vals['price_reduce']) and (template_price_vals['price_reduce'] or not website.prevent_zero_price_sale)">
+                            <del t-attf-class="text-muted me-1 h6 mb-0" style="white-space: nowrap;">
+                                <em class="small" t-esc="template_price_vals['base_price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" />
+                            </del>
+                        </t>
+                        <span class="h6 mb-0" t-if="template_price_vals['price_reduce'] or not website.prevent_zero_price_sale" t-esc="template_price_vals['price_reduce']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        <span class="h6 mb-0" t-elif="any(ptav.price_extra for ptav in product.attribute_line_ids.product_template_value_ids)">&amp;nbsp;</span>
+                        <span class="h6 mb-0" t-else="" t-field="website.prevent_zero_price_sale_text"/>
+                        <span itemprop="price" style="display:none;" t-esc="template_price_vals['price_reduce']" />
+                        <span itemprop="priceCurrency" style="display:none;" t-esc="website.currency_id.name" />
+
+                </span>
+            </t>
+        </xpath>
+    </template>
+
+    
+    <!-- This is the template that will be used to display the discounted price in the product page -->
+     <template id="product_pricelist_inherit" inherit_id="website_sale.product_price" name="Product Price Display Modification">
+        <xpath expr="//span[@class='oe_price']" position="replace">
+            <t t-if="product.discount_percentage > 0">
+                <!-- Display original price with strikethrough -->
+                <span class="original-price" style="text-decoration: line-through; color: red;">
+                    <t t-esc="product.list_price"/>
+                </span>
+                <!-- Display discounted price -->
+                <span class="discounted-price" style="font-weight: bold; color: green;">
+                    <t t-esc="product.discounted_price"/>
+                </span>
+            </t>
+            <t t-if="product.discount_percentage == 0">
+                <!-- Display only original price if no discount -->
+                <span class="regular-price">
+                    <t t-esc="product.list_price"/>
+                </span>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- This is the template that will be used to display the discounted price in the cart page -->
+    <template id="website_sale_cart_inherit" inherit_id="website_sale.cart_lines">
+        <xpath expr="//t[@t-if='line.product_id']" position="inside">
+            <!-- <t t-set="line" t-value="line.product_id"/> -->
+           <t t-if="line.product_id.discount_percentage > 0">
+                <!-- Apply strikethrough on the original price -->
+                <span class="original-price" style="text-decoration: line-through; color: red;">
+                    <t t-esc="line.product_id.list_price"/>
+                </span>
+                <!-- Display discounted price -->
+                <span class="discounted-price" style="font-weight: bold; color: green;">
+                    <t t-esc="line.product_id.discounted_price"/>
+                </span>
+            </t>
+            <t t-else="">
+                <!-- If no discount, show the regular price -->
+                <span class="regular-price">
+                    <t t-esc="line.product_id.list_price"/>
+                </span>
+            </t>
+        </xpath>
+    </template>
+
+
+
+    <!-- This is the template that will be used to display the discounted price in the checkout page -->
+    <template id="website_sale_checkout_layout_inherit" inherit_id="website_sale.checkout_layout">
+        <xpath expr="//table[@id='cart_products']/tbody/tr/td[2]" position="replace">
+
+            <td>
+                <t t-set="line" t-value="line.product_id"/>
+                <t t-if="line.discount_percentage > 0">
+                    <!-- Apply strikethrough on the original price -->
+                    <span class="original-price" style="text-decoration: line-through; color: red;">
+                        <t t-esc="line.list_price"/>
+                    </span>
+                    <!-- Display discounted price -->
+                    <span class="discounted-price" style="font-weight: bold; color: green;">
+                        <t t-esc="line.discounted_price"/>
+                    </span>
+                </t>
+                <t t-else="">
+                    <!-- If no discount, show the regular price -->
+                    <span class="regular-price">
+                        <t t-esc="line.list_price"/>
+                    </span>
+                </t>
+            </td>
+        </xpath>
+    </template>
+
+
+    
+
+
+    
+            
+
+
+    
+
+</odoo>
